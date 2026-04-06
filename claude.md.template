@@ -1,0 +1,53 @@
+# Local Claude Instructions — [DEVICE NAME]
+
+## Paths (fill in per device)
+- brain-kit repo: [PATH_TO_BRAIN_KIT]        # e.g. ~/brain-kit
+- Claude config dir: [PATH_TO_CLAUDE_DIR]    # e.g. ~/.claude
+
+## brain-kit sync
+
+brain-kit is the source of truth for all skills, agents, prompts, and configs.
+Local copies in ~/.claude are disposable — always sync from the repo, not the other way around
+unless you are explicitly pushing an improvement back.
+
+### Pulling from brain-kit → ~/.claude
+
+To deploy a skill locally:
+```
+cp -r [PATH_TO_BRAIN_KIT]/skills/<skill-name> [PATH_TO_CLAUDE_DIR]/skills/
+```
+
+To deploy all skills at once:
+```
+cp -r [PATH_TO_BRAIN_KIT]/skills/. [PATH_TO_CLAUDE_DIR]/skills/
+```
+
+To deploy a config:
+```
+cp [PATH_TO_BRAIN_KIT]/configs/<file> [PATH_TO_CLAUDE_DIR]/
+```
+
+### Pushing improvements back to brain-kit
+
+If a skill or asset was edited locally and should be persisted:
+1. Copy the edited file back to the repo: `cp [PATH_TO_CLAUDE_DIR]/skills/<skill>/<file> [PATH_TO_BRAIN_KIT]/skills/<skill>/`
+2. cd into brain-kit, review the diff, commit, and push.
+3. Never commit device-specific files (this claude.md) — it is gitignored.
+
+### Pulling latest from remote
+
+```
+cd [PATH_TO_BRAIN_KIT] && git pull
+```
+
+Run this on each device to stay in sync after pushing from another machine.
+
+## What lives where
+
+| Asset | Source of truth | Local copy location |
+|---|---|---|
+| Skills | brain-kit/skills/ | ~/.claude/skills/ |
+| Agents | brain-kit/agents/ | ~/.claude/agents/ |
+| Prompts | brain-kit/prompts/ | ~/.claude/ or project dirs |
+| Configs | brain-kit/configs/ | ~/.claude/ |
+| This file | NOT committed (gitignored) | ~/.claude/claude.md or ~/brain-kit/claude.md |
