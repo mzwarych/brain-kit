@@ -30,7 +30,7 @@ This skill supports four modes, invoked as `/sync <mode>`:
 | Mode | What it does |
 |------|-------------|
 | `/sync pull` | Pull latest from remote → brain-kit, then deploy all assets to `<CLAUDE_DIR>` |
-| `/sync push <path> [message]` | Copy a locally-edited file back to brain-kit, commit, and push |
+| `/sync push [path...] [message]` | Copy locally-edited files or directories back to brain-kit, commit, and push. No path = sync all changes. |
 | `/sync deploy <asset>` | Copy a specific skill/agent/config from brain-kit → `<CLAUDE_DIR>` |
 | `/sync status` | Show what differs between brain-kit and `<CLAUDE_DIR>` |
 | `/sync help` | Display this command reference |
@@ -76,35 +76,57 @@ After pulling, report:
 
 ---
 
-## `/sync push <path> [message]` — local edit → brain-kit → remote
+## `/sync push [path...] [message]` — local edit → brain-kit → remote
 
-Use this when a skill or asset was edited inside `<CLAUDE_DIR>` and the improvement should be persisted to the repo.
+Use this when one or more skills or assets were edited inside `<CLAUDE_DIR>` and the improvements should be persisted to the repo.
 
-`<path>` is the path of the edited file, relative to `<CLAUDE_DIR>` (e.g. `skills/pdf/SKILL.md`).
+`[path...]` is one or more paths relative to `<CLAUDE_DIR>`. Each path can be a file or a directory. Multiple paths are space-separated. If no path is provided, all differing assets are pushed (see no-argument mode below).
+
+### With paths
 
 ```bash
-# 1. Determine source and destination
+# For each specified path:
 SRC=<CLAUDE_DIR>/<path>
 DEST=<BRAIN_KIT_PATH>/<path>
 
-# 2. Show a diff so the user can review before committing
+# 1. Show a diff for each path before touching anything
+#    For a file:
 diff "$DEST" "$SRC"
+#    For a directory:
+diff -r "$DEST" "$SRC"
 
-# 3. Copy the file back
-cp "$SRC" "$DEST"
+# 2. Ask the user to confirm — the copy will overwrite brain-kit
+# 3. Copy each path back (works for files and directories)
+cp -r "$SRC" "$(dirname $DEST)/"
 
-# 4. Commit and push
+# 4. Stage, commit, and push all at once
 cd <BRAIN_KIT_PATH>
-git add <path>
+git add <path1> <path2> ...
 git commit -m "<message or auto-generated summary>"
 git push origin main
 ```
 
-If no `[message]` is provided, generate a concise commit message from the diff (e.g. `"improve pdf skill: add form annotation handling"`).
+If no `[message]` is provided, generate a concise commit message from the combined diff (e.g. `"improve pdf skill: add form annotation handling"`).
 
-**Before running step 3**, show the diff and ask the user to confirm — the copy overwrites the brain-kit version.
+### No-argument mode — push all changes
 
-**Never commit `claude.md`** — it is gitignored and device-specific.
+When invoked as `/sync push` with no paths, find everything in `<CLAUDE_DIR>` that differs from brain-kit:
+
+```bash
+# Find all differing assets across each asset type
+diff -rq --brief <CLAUDE_DIR>/skills <BRAIN_KIT_PATH>/skills
+diff -rq --brief <CLAUDE_DIR>/agents <BRAIN_KIT_PATH>/agents
+diff -rq --brief <CLAUDE_DIR>/configs <BRAIN_KIT_PATH>/configs
+diff -rq --brief <CLAUDE_DIR>/references <BRAIN_KIT_PATH>/references
+diff -rq --brief <CLAUDE_DIR>/scripts <BRAIN_KIT_PATH>/scripts
+```
+
+1. Show the full list of files that would be pushed
+2. **Prompt the user to confirm before proceeding** — this is a bulk overwrite
+3. Copy all differing paths back to brain-kit with `cp -r`
+4. Stage all changes, commit with an auto-generated summary, and push
+
+**Never commit `claude.md`** — it is gitignored and device-specific. Skip it even if it appears in the diff.
 
 ---
 

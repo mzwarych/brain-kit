@@ -64,7 +64,7 @@ Once the included skills are deployed, Claude manages the repo for you.
 
 brain-kit ships with `/install-skill` to get you started. There are tons of great resources available publicly (see below) but most of the time you don't want the entire collection. `/install-skill` lets you pull down specific resources from git or the local plugin marketplace, so you get exactly what you need.
 
-*NOTE:* `/install-skill` will pull the specified resource into your local AI resources (`.claude/skills`). Use `/sync push` to copy the changes back to brain-kit. 
+*NOTE:* `/install-skill` will pull the specified resource into your local AI resources (`.claude/skills`). Use `/sync push skills/skill-name` to copy it back to brain-kit and commit it.
 
 
 #### To fetch a new skill from github:
@@ -75,7 +75,7 @@ brain-kit ships with `/install-skill` to get you started. There are tons of grea
 
 As your collection starts to grow, it can become difficult to keep track of what version you have of a given skill, where it came from in the first place, and so on. `/install-skill` manages this for you by creating and updating a `sources.json` file that lives in your local AI skill resource (eg `.claude/skills/sources.json`).
 
-This file will be merged back into your brain-kit repo on `/sync push`, so you're always organized and up to date. 
+Run `/sync push skills/sources.json` to copy it back to brain-kit and keep your registry in sync.
 
 Some community collections that you can use `/install-skill`  to pull from:
 
@@ -111,7 +111,23 @@ git commit -m "add my-skill"
 git push origin main
 ```
 
-If you improve a skill mid-session (edited inside `~/.claude/skills/`), use `/sync push skills/my-skill/SKILL.md` to copy it back, commit, and push in one step.
+If you improve a skill mid-session (edited inside `~/.claude/skills/`), push it back with:
+
+```
+/sync push skills/my-skill
+```
+
+This copies the entire skill folder back to brain-kit, commits, and pushes. You can also pass multiple paths or individual files:
+
+```
+/sync push skills/my-skill agents/my-agent.md
+```
+
+Or push everything that's changed at once — Claude will show you the diff and ask for confirmation first:
+
+```
+/sync push
+```
 
 ---
 
