@@ -15,6 +15,8 @@ The natural solution was a git-based source of truth, but that comes with managi
 
 brain-kit is a skill-based framework centered around personal AI infrastructure for extensible development of a knowledge base you can pull into any environment you happen to be working in. It handles the heavy lifting of pushing, pulling, copying, overwriting and diffing for you, so you can spend less time syncing, writing and importing skills and more time on whatever it is you do. 
 
+---
+
 ## What's included
 
 | Skill | What it does |
@@ -42,8 +44,6 @@ cp ~/brain-kit/claude.md.template ~/brain-kit/claude.md
 # Edit claude.md to fill in your device-specific paths — it's gitignored. this is a one-time per-device setup. all you need to is tell brain-kit where its local repo lives, and where your local AI resources live. 
 ```
 
-Run `git pull` in `~/brain-kit` to stay in sync as your repo evolves.
-
 ---
 
 ## Syncing with `/sync`
@@ -53,7 +53,7 @@ Once the included skills are deployed, Claude manages the repo for you.
 | Command | What it does |
 |---------|-------------|
 | `/sync pull` | `git pull` from remote, then deploy all assets to `~/.claude` |
-| `/sync push <path> [message]` | Copy a locally-edited file back to brain-kit, commit, and push |
+| `/sync push [path...]` | Copy files or directories back to brain-kit, commit, and push. No path = sync all changes (with confirmation) |
 | `/sync deploy <asset>` | Deploy one specific skill, agent, or config to `~/.claude` |
 | `/sync status` | Show what differs between brain-kit and `~/.claude` |
 | `/sync help` | Print the command reference |
@@ -67,17 +67,15 @@ brain-kit ships with `/install-skill` to get you started. There are tons of grea
 *NOTE:* `/install-skill` will pull the specified resource into your local AI resources (`.claude/skills`). Use `/sync push skills/skill-name` to copy it back to brain-kit and commit it.
 
 
-#### To fetch a new skill from github:
-`/install-skill git https://github.com/user/repo skills/skill-name skills/skill-name-2`
+**From GitHub:** `/install-skill git https://github.com/user/repo skills/skill-name skills/skill-name-2`
 
-#### To fetch a new skill from the local marketplace:
-`/install-skill local [keyword]`
+**From the local marketplace:** `/install-skill local [keyword]`
 
 As your collection starts to grow, it can become difficult to keep track of what version you have of a given skill, where it came from in the first place, and so on. `/install-skill` manages this for you by creating and updating a `sources.json` file that lives in your local AI skill resource (eg `.claude/skills/sources.json`).
 
 Run `/sync push skills/sources.json` to copy it back to brain-kit and keep your registry in sync.
 
-Some community collections that you can use `/install-skill`  to pull from:
+Some community collections that you can use `/install-skill` to pull from:
 
 - **[Anthropic skills](https://github.com/anthropics/skills)** — official skills for PDF, XLSX, and more
 - **[everything-claude-code](https://github.com/affaan-m/everything-claude-code)** — frontend, backend, Python, API design patterns
