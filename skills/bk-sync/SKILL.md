@@ -1,9 +1,9 @@
 ---
-name: sync
+name: bk-sync
 description: Sync brain-kit with the local Claude config directory (~/.claude). Use this skill when the user wants to pull the latest skills/agents/configs from the brain-kit repo into their local Claude setup, push a locally-edited skill back to brain-kit, check what's out of sync, or deploy a specific asset. Trigger on phrases like "sync brain-kit", "deploy skills", "push this skill back", "pull latest", "update my skills", or "what's out of sync".
 ---
 
-# brain-kit Sync
+# brain-kit Sync (bk-sync)
 
 brain-kit (`~/brain-kit`) is the source of truth for all skills, agents, prompts, and configs. Local copies in `~/.claude` are disposable. The flow is always:
 
@@ -25,27 +25,27 @@ Use those values in all commands below. Never hardcode paths.
 
 ## Modes
 
-This skill supports four modes, invoked as `/sync <mode>`:
+This skill supports four modes, invoked as `/bk-sync <mode>`:
 
 | Mode | What it does |
 |------|-------------|
-| `/sync pull` | Pull latest from remote → brain-kit, then deploy all assets to `<CLAUDE_DIR>` |
-| `/sync push [path...] [message]` | Copy locally-edited files or directories back to brain-kit, commit, and push. No path = sync all changes. |
-| `/sync deploy <asset>` | Copy a specific skill/agent/config from brain-kit → `<CLAUDE_DIR>` |
-| `/sync status` | Show what differs between brain-kit and `<CLAUDE_DIR>` |
-| `/sync help` | Display this command reference |
+| `/bk-sync pull` | Pull latest from remote → brain-kit, then deploy all assets to `<CLAUDE_DIR>` |
+| `/bk-sync push [path...] [message]` | Copy locally-edited files or directories back to brain-kit, commit, and push. No path = sync all changes. |
+| `/bk-sync deploy <asset>` | Copy a specific skill/agent/config from brain-kit → `<CLAUDE_DIR>` |
+| `/bk-sync status` | Show what differs between brain-kit and `<CLAUDE_DIR>` |
+| `/bk-sync help` | Display this command reference |
 
 If invoked without arguments or contextually, infer the right mode from the conversation.
 
 ---
 
-## `/sync help`
+## `/bk-sync help`
 
 Print the **Modes** table above as a quick reference. No other output.
 
 ---
 
-## `/sync pull` — remote → brain-kit → <CLAUDE_DIR>
+## `/bk-sync pull` — remote → brain-kit → <CLAUDE_DIR>
 
 Pull the latest from remote, then deploy everything to the local Claude config.
 
@@ -76,7 +76,7 @@ After pulling, report:
 
 ---
 
-## `/sync push [path...] [message]` — local edit → brain-kit → remote
+## `/bk-sync push [path...] [message]` — local edit → brain-kit → remote
 
 Use this when one or more skills or assets were edited inside `<CLAUDE_DIR>` and the improvements should be persisted to the repo.
 
@@ -110,7 +110,7 @@ If no `[message]` is provided, generate a concise commit message from the combin
 
 ### No-argument mode — push all changes
 
-When invoked as `/sync push` with no paths, find everything in `<CLAUDE_DIR>` that differs from brain-kit:
+When invoked as `/bk-sync push` with no paths, find everything in `<CLAUDE_DIR>` that differs from brain-kit:
 
 ```bash
 # Find all differing assets across each asset type
@@ -130,7 +130,7 @@ diff -rq --brief <CLAUDE_DIR>/scripts <BRAIN_KIT_PATH>/scripts
 
 ---
 
-## `/sync deploy <asset>` — brain-kit → <CLAUDE_DIR> (single asset)
+## `/bk-sync deploy <asset>` — brain-kit → <CLAUDE_DIR> (single asset)
 
 Use this to deploy one specific skill, agent, config, reference, or script without pulling from remote.
 
@@ -155,7 +155,7 @@ Confirm the asset exists in brain-kit before copying. If it doesn't exist, repor
 
 ---
 
-## `/sync status` — what's out of sync
+## `/bk-sync status` — what's out of sync
 
 Compare brain-kit against the local Claude config to show what would change on a pull or push.
 
@@ -201,4 +201,4 @@ Report in three sections:
 - **Never commit `claude.md`** — it is gitignored and device-specific
 - **Never `git init` inside `<CLAUDE_DIR>`** — there is no git repo there
 - **Local copies are disposable** — if unsure whether to push or pull, prefer pulling (brain-kit wins)
-- **Improvements flow back**: edit in `~/.claude` → `/sync push` → brain-kit → git push → other devices pull
+- **Improvements flow back**: edit in `~/.claude` → `/bk-sync push` → brain-kit → git push → other devices pull

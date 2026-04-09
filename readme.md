@@ -21,7 +21,8 @@ brain-kit is a skill-based framework centered around personal AI infrastructure 
 
 | Skill | What it does |
 |-------|-------------|
-| `/sync` | Pull updates from your brain-kit repo into `~/.claude`, push local edits back, deploy individual assets, or check what's out of sync |
+| `/bk-sync` | Pull updates from your brain-kit repo into `~/.claude`, push local edits back, deploy individual assets, or check what's out of sync |
+| `/bk-view` | Open a visual dashboard in the browser — resource counts, collapsible file tree, and live file preview. Powered by `scripts/bk-dashboard.py` |
 | `/install-skill` | Discover and install skills from GitHub repos, the Anthropic skills repo, or the local plugin marketplace |
 
 Everything else — agents, references, prompts, scripts, configs — is yours to fill in.
@@ -46,17 +47,43 @@ cp ~/brain-kit/claude.md.template ~/brain-kit/claude.md
 
 ---
 
-## Syncing with `/sync`
+## Syncing with `/bk-sync`
 
 Once the included skills are deployed, Claude manages the repo for you.
 
 | Command | What it does |
 |---------|-------------|
-| `/sync pull` | `git pull` from remote, then deploy all assets to `~/.claude` |
-| `/sync push [path...]` | Copy files or directories back to brain-kit, commit, and push. No path = sync all changes (with confirmation) |
-| `/sync deploy <asset>` | Deploy one specific skill, agent, or config to `~/.claude` |
-| `/sync status` | Show what differs between brain-kit and `~/.claude` |
-| `/sync help` | Print the command reference |
+| `/bk-sync pull` | `git pull` from remote, then deploy all assets to `~/.claude` |
+| `/bk-sync push [path...]` | Copy files or directories back to brain-kit, commit, and push. No path = sync all changes (with confirmation) |
+| `/bk-sync deploy <asset>` | Deploy one specific skill, agent, or config to `~/.claude` |
+| `/bk-sync status` | Show what differs between brain-kit and `~/.claude` |
+| `/bk-sync help` | Print the command reference |
+
+---
+
+## Browsing with `/bk-view`
+
+`/bk-view` opens an interactive dashboard in the browser — resource counts in the header, a collapsible file tree on the left, and a Markdown/file preview on the right.
+
+It runs a local HTTP server (`scripts/bk-dashboard.py --serve`) so the dashboard always reflects the current state of your brain-kit: add a file, refresh the page, and it appears.
+
+```
+/bk-view
+```
+
+The server starts at `http://localhost:7821` and stays running until you stop it (Ctrl-C in the terminal where Claude launched it). If your browser doesn't open automatically, navigate there manually.
+
+To use a different port:
+
+```bash
+python3 ~/brain-kit/scripts/bk-dashboard.py --serve 8080 ~/brain-kit
+```
+
+For a one-shot static snapshot (no server, no refresh support):
+
+```bash
+python3 ~/brain-kit/scripts/bk-dashboard.py --open ~/brain-kit
+```
 
 ---
 
@@ -64,7 +91,7 @@ Once the included skills are deployed, Claude manages the repo for you.
 
 brain-kit ships with `/install-skill` to get you started. There are tons of great resources available publicly (see below) but most of the time you don't want the entire collection. `/install-skill` lets you pull down specific resources from git or the local plugin marketplace, so you get exactly what you need.
 
-*NOTE:* `/install-skill` will pull the specified resource into your local AI resources (`.claude/skills`). Use `/sync push skills/skill-name` to copy it back to brain-kit and commit it.
+*NOTE:* `/install-skill` will pull the specified resource into your local AI resources (`.claude/skills`). Use `/bk-sync push skills/skill-name` to copy it back to brain-kit and commit it.
 
 
 **From GitHub:** `/install-skill git https://github.com/user/repo skills/skill-name skills/skill-name-2`
@@ -73,7 +100,7 @@ brain-kit ships with `/install-skill` to get you started. There are tons of grea
 
 As your collection starts to grow, it can become difficult to keep track of what version you have of a given skill, where it came from in the first place, and so on. `/install-skill` manages this for you by creating and updating a `sources.json` file that lives in your local AI skill resource (eg `.claude/skills/sources.json`).
 
-Run `/sync push skills/sources.json` to copy it back to brain-kit and keep your registry in sync.
+Run `/bk-sync push skills/sources.json` to copy it back to brain-kit and keep your registry in sync.
 
 Some community collections that you can use `/install-skill` to pull from:
 
@@ -112,19 +139,19 @@ git push origin main
 If you improve a skill mid-session (edited inside `~/.claude/skills/`), push it back with:
 
 ```
-/sync push skills/my-skill
+/bk-sync push skills/my-skill
 ```
 
 This copies the entire skill folder back to brain-kit, commits, and pushes. You can also pass multiple paths or individual files:
 
 ```
-/sync push skills/my-skill agents/my-agent.md
+/bk-sync push skills/my-skill agents/my-agent.md
 ```
 
 Or push everything that's changed at once — Claude will show you the diff and ask for confirmation first:
 
 ```
-/sync push
+/bk-sync push
 ```
 
 ---
@@ -140,4 +167,4 @@ cp ~/brain-kit/claude.md.template ~/brain-kit/claude.md
 # Fill in device-specific paths in claude.md
 ```
 
-After that, `/sync pull` handles everything — pulling the latest from remote and deploying all assets to `~/.claude` in one step.
+After that, `/bk-sync pull` handles everything — pulling the latest from remote and deploying all assets to `~/.claude` in one step.
